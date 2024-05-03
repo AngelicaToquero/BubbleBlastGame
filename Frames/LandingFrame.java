@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class LandingFrame extends JFrame implements ActionListener {
-    GradientButton button = new GradientButton("Continue");
+    GradientButton button = new GradientButton("Start Game");
     ImageIcon image = new ImageIcon("Frames\\pictures\\photo_2024-03-31_00-00-54-removebg-preview.png");
     Border border = BorderFactory.createLineBorder(new Color(254, 200, 216), 5);
 
