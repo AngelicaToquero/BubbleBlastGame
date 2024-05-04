@@ -78,13 +78,23 @@ public class HomeFrame extends JFrame implements ActionListener {
         add(mainPanel);
     }
 
+
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == quitButton) {
-            LandingFrame landingFrame = new LandingFrame();
-            landingFrame.setVisible(true);
-            landingFrame.setLocationRelativeTo(null);
-            dispose(); // Close the current frame
-        }
+public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == quitButton) {
+        LandingFrame landingFrame = new LandingFrame();
+        landingFrame.setVisible(true);
+        landingFrame.setLocationRelativeTo(null);
+        dispose(); // Close the current frame
+    } else if (e.getSource() == playButton) {
+        openGamePage();
     }
+}
+
+private void openGamePage() {
+    GameFrame gameFrame = new GameFrame();
+    gameFrame.setVisible(true);
+    gameFrame.setLocationRelativeTo(null);
+    dispose(); // Close the current frame
+}
 }
