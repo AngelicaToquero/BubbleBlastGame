@@ -10,14 +10,15 @@ import java.util.Random;
 public class GameFrame extends JFrame implements ActionListener {
     Font font = new Font("Arial", Font.BOLD, 20);
     JLabel label = new JLabel("Welcome to the Bubble Sort Game!");
-    JLabel instructionLabel = new JLabel("Instructions: Should the highlighted numbers be swapped?");  
-    JLabel timeLabel = new JLabel("Time: 0 seconds");    
+    JLabel instructionLabel = new JLabel("Instructions: Should the highlighted numbers be swapped?");
+    JLabel timeLabel = new JLabel("Time: 0 seconds");
 
     // For main panel
     JPanel mainPanel = new JPanel(new GridLayout(5, 1)); // GridLayout with 4 rows and 1 column
 
     JButton yesButton;
     JButton noButton;
+    JButton hintButton; // New hint button
 
     private static final int ARRAY_SIZE = 10;
     private static final int MAX_NUMBER = 100;
@@ -34,73 +35,70 @@ public class GameFrame extends JFrame implements ActionListener {
 
     GameFrame() {
         // Main panel settings
-       // Create the main panel
-JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, -5)); // GridLayout with 3 rows, 1 column, and 10px horizontal and vertical gap
-mainPanel.setBackground(new Color(255, 205, 234));
+        JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, -5)); // GridLayout with 3 rows, 1 column, and 10px
+                                                                     // horizontal and vertical gap
+        mainPanel.setBackground(new Color(255, 205, 234));
 
-// Create a panel for label, instruction, and time
-JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-infoPanel.setBackground(new Color(255, 205, 234));
+        // Create a panel for label, instruction, and time
+        JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        infoPanel.setBackground(new Color(255, 205, 234));
 
-// Add labels to the info panel
-infoPanel.add(label);
-infoPanel.add(instructionLabel);
-infoPanel.add(timeLabel);
+        // Add labels to the info panel
+        infoPanel.add(label);
+        infoPanel.add(instructionLabel);
+        infoPanel.add(timeLabel);
 
-label.setFont(font);
-instructionLabel.setFont(font); // Increase font size to 16
-timeLabel.setFont(font); // Increase font size to 16
-// Add the info panel to the main panel
-mainPanel.add(infoPanel);
+        label.setFont(font);
+        instructionLabel.setFont(font); // Increase font size to 16
+        timeLabel.setFont(font); // Increase font size to 16
+        // Add the info panel to the main panel
+        mainPanel.add(infoPanel);
 
-// Add circles to main panel
-JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout with center alignment and 10px horizontal and vertical gap
-circlePanel.setBackground(new Color(255, 205, 234));
+        // Add circles to main panel
+        JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout with center alignment
+                                                                                   // and 10px horizontal and vertical
+                                                                                   // gap
+        circlePanel.setBackground(new Color(255, 205, 234));
 
-for (int i = 0; i < ARRAY_SIZE; i++) {
-    numberShapes[i] = new CircleShape();
-    circlePanel.add(numberShapes[i]);
-}
+        for (int i = 0; i < ARRAY_SIZE; i++) {
+            numberShapes[i] = new CircleShape();
+            circlePanel.add(numberShapes[i]);
+        }
 
-mainPanel.add(circlePanel);
+        mainPanel.add(circlePanel);
 
-// Add a panel for buttons to main panel
-JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); // FlowLayout with center alignment and 10px horizontal and vertical gap
-buttonPanel.setBackground(new Color(255, 205, 234));
+        // Add a panel for buttons to main panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); // FlowLayout with center alignment
+                                                                                    // and 10px horizontal and vertical
+                                                                                    // gap
+        buttonPanel.setBackground(new Color(255, 205, 234));
 
-// Add yes and no buttons
-yesButton = new JButton("Yes");
-yesButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for Yes button
-noButton = new JButton("No");
-noButton.setPreferredSize(new Dimension(150, 60));
+        // Add yes button
+        yesButton = new JButton("Yes");
+        yesButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for Yes button
+        buttonPanel.add(yesButton);
 
-buttonPanel.add(yesButton);
-buttonPanel.add(noButton);
+        // Add no button
+        noButton = new JButton("No");
+        noButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for No button
+        buttonPanel.add(noButton);
 
-mainPanel.add(buttonPanel);
-        yesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                swapNumbers();
-            }
-        });
+        // Add hint button to the east (right) side of BorderLayout
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // FlowLayout for hint button
+        rightButtonPanel.setBackground(new Color(255, 205, 234));
+        rightButtonPanel.add(hintButton = new JButton("?"));
+        hintButton.setPreferredSize(new Dimension(40, 40)); // Set preferred size for hint button
+        hintButton.setMargin(new Insets(0, 0, 0, 0)); // Set margin to zero for a round button
+        hintButton.setFocusPainted(false); // Remove focus paint
+        hintButton.setFont(new Font("Arial", Font.BOLD, 20)); // Set font for the button text
 
-        noButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lastProcessedIndex++; // Move one index forward
-                displayArrayWithHighlight(); // Update the display
+        buttonPanel.add(rightButtonPanel, BorderLayout.EAST); // Add hint button to the right side
 
-                // Check if it's the last pass, prompt for another pass
-                if (lastProcessedIndex >= ARRAY_SIZE - 1) {
-                    promptForNextPass();
-                } else {
-                    bubbleSort(); // Continue sorting after penalty
-                }
-            }
-        });
+        mainPanel.add(buttonPanel);
 
-       
+        yesButton.addActionListener(this);
+        noButton.addActionListener(this);
+        hintButton.addActionListener(this); // ActionListener for hint button
 
         // Add main panel to the frame
         add(mainPanel);
@@ -157,7 +155,21 @@ mainPanel.add(buttonPanel);
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Handle other actions if needed
+        if (e.getSource() == yesButton) {
+            swapNumbers();
+        } else if (e.getSource() == noButton) {
+            lastProcessedIndex++; // Move one index forward
+            displayArrayWithHighlight(); // Update the display
+
+            // Check if it's the last pass, prompt for another pass
+            if (lastProcessedIndex >= ARRAY_SIZE - 1) {
+                promptForNextPass();
+            } else {
+                bubbleSort(); // Continue sorting after penalty
+            }
+        } else if (e.getSource() == hintButton) { // Handle hint button click
+            showRandomHint();
+        }
     }
 
     private void bubbleSort() {
@@ -212,18 +224,20 @@ mainPanel.add(buttonPanel);
     }
 
     private void promptForNextPass() {
-        int response = JOptionPane.showConfirmDialog(this, "Do you want to perform another pass?", "Next Pass", JOptionPane.YES_NO_OPTION);
+        int response = JOptionPane.showConfirmDialog(this, "Do you want to perform another pass?", "Next Pass",
+                JOptionPane.YES_NO_OPTION);
         if (response == JOptionPane.YES_OPTION) {
             lastProcessedIndex = 0; // Reset the lastProcessedIndex
             bubbleSort(); // Perform another pass
         } else {
             // Check if the array is sorted after the last pass
-            
-        if (isSorted()) {
-            long endTime = System.currentTimeMillis();
-            double timeTaken = (endTime - startTime + penaltyTime)/1000;
-            JOptionPane.showMessageDialog(this, "Congratulations! You sorted the array in " + timeTaken + " seconds with " + swapCount + " swaps.");
-        } else {
+
+            if (isSorted()) {
+                long endTime = System.currentTimeMillis();
+                double timeTaken = (endTime - startTime + penaltyTime) / 1000;
+                JOptionPane.showMessageDialog(this, "Congratulations! You sorted the array in " + timeTaken
+                        + " seconds with " + swapCount + " swaps.");
+            } else {
                 JOptionPane.showMessageDialog(this, "Sorry, you lose. The array is not sorted.");
             }
         }
@@ -237,24 +251,48 @@ mainPanel.add(buttonPanel);
         return indices;
     }
 
+    private void showRandomHint() {
+        String[] hints = {
+                "Keep an eye on the numbers inside the bubbles to guide your sorting.",
+                "Start with the first pair of bubbles and continue swapping until they're in order.",
+                "Swap adjacent bubbles to arrange them in ascending order.",
+                "Visualize the bubbles moving and prioritize sorting the smaller numbers first.",
+                "Take your time and strategize each swap to minimize the number of movements needed.",
+                "Remember, patience and methodical thinking are key to mastering bubble sorting.",
+                "Alright, champ! Think of it like organizing your messy desk - gotta move things around until everything's neat and tidy!",
+                "Hey buddy, wanna tackle this like a puzzle? Just slide those bubbles like you're solving a Rubik's Cube!",
+                "Hey pal, ever played Tetris? It's kinda like that, but with numbers inside bubbles. Just gotta fit 'em in the right order!",
+                "Okay, let's sort these bubbles out! It's like cleaning up your room - start with the messiest corner and work your way through!",
+                "Yo, ready to dive into some bubble fun? Think of it as a little challenge, like trying to beat your high score in a game!",
+                "Hey friend! Sorting these bubbles is like solving a riddle - piece by piece until it all clicks into place!",
+                "Alright, time to play bubble boss! Imagine you're directing a traffic jam - gotta shuffle those numbers until they're moving smoothly!",
+                "Hey, wanna crack this bubble code? It's like cracking a safe, but with numbers inside bubbles. Let's find the right combo!",
+                "Hey there, champ! Let's get these bubbles in line, like herding cats but with numbers. You got this!"
+        };
+
+        Random random = new Random();
+        int index = random.nextInt(hints.length);
+        JOptionPane.showMessageDialog(this, hints[index], "Hint", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     class CircleShape extends JPanel {
         private Color color = Color.PINK;
         private String text = "";
-    
+
         CircleShape() {
             setPreferredSize(new Dimension(100, 100)); // Set the size of the circle
         }
-    
+
         void setColor(Color color) {
             this.color = color;
             repaint(); // Redraw the shape with the new color
         }
-    
+
         void setText(String text) {
             this.text = text;
             repaint();
         }
-        
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -274,4 +312,4 @@ mainPanel.add(buttonPanel);
             g.drawString(text, getWidth() / 2 - textWidth / 2, getHeight() / 2 + textHeight / 4);
         }
     }
-}        
+}
