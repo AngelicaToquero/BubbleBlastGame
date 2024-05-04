@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
 import java.util.Random;
 
 
@@ -24,7 +25,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private int swapsCount = 0;
     private long startTime;
 
-    JButton[] numberButtons = new JButton[ARRAY_SIZE];
+    CircleButton[] numberButtons = new CircleButton[ARRAY_SIZE];
 
     GameFrame() {
         // Main panel settings
@@ -40,7 +41,7 @@ public class GameFrame extends JFrame implements ActionListener {
         mainPanel.add(timeLabel);
 
         for (int i = 0; i < ARRAY_SIZE; i++) {
-            numberButtons[i] = new JButton();
+            numberButtons[i] = new CircleButton();
             numberButtons[i].addActionListener(this);
             mainPanel.add(numberButtons[i]);
         }
@@ -136,5 +137,39 @@ public class GameFrame extends JFrame implements ActionListener {
         int temp = array[i];
         array[i] = array[j];
         array[j] = temp;
+    }
+    
+    // Custom JButton class for circular buttons
+    class CircleButton extends JButton {
+        CircleButton() {
+            setContentAreaFilled(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            if (getModel().isArmed()) {
+                g.setColor(Color.lightGray);
+            } else {
+                g.setColor(getBackground());
+            }
+            g.fillOval(0, 0, getSize().width - 1, getSize().height - 1);
+            super.paintComponent(g);
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            g.setColor(Color.BLACK);
+            g.drawOval(0, 0, getSize().width - 1, getSize().height - 1);
+        }
+
+        @Override
+        Shape getShape() {
+            return new Ellipse2D.Double(0, 0, getWidth(), getHeight());
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(40, 40);
+        }
     }
 }
