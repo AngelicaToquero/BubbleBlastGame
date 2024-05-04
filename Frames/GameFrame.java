@@ -8,12 +8,13 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class GameFrame extends JFrame implements ActionListener {
+    Font font = new Font("Arial", Font.BOLD, 20);
     JLabel label = new JLabel("Welcome to the Bubble Sort Game!");
-    JLabel instructionLabel = new JLabel("Instructions: Should the highlighted numbers be swapped?");
-    JLabel timeLabel = new JLabel("Time: 0 seconds");
+    JLabel instructionLabel = new JLabel("Instructions: Should the highlighted numbers be swapped?");  
+    JLabel timeLabel = new JLabel("Time: 0 seconds");    
 
     // For main panel
-    JPanel mainPanel = new JPanel(new GridLayout(4, 1)); // GridLayout with 4 rows and 1 column
+    JPanel mainPanel = new JPanel(new GridLayout(5, 1)); // GridLayout with 4 rows and 1 column
 
     JButton yesButton;
     JButton noButton;
@@ -33,39 +34,50 @@ public class GameFrame extends JFrame implements ActionListener {
 
     GameFrame() {
         // Main panel settings
-        mainPanel.setBackground(new Color(255, 205, 234));
-        mainPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10)); // FlowLayout with center alignment and 10px horizontal and vertical gap
+       // Create the main panel
+JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, -5)); // GridLayout with 3 rows, 1 column, and 10px horizontal and vertical gap
+mainPanel.setBackground(new Color(255, 205, 234));
 
-        // Adjust the alignment for the labels
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        instructionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+// Create a panel for label, instruction, and time
+JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+infoPanel.setBackground(new Color(255, 205, 234));
 
-        // Add labels to main panel
-        mainPanel.add(label);
-        mainPanel.add(instructionLabel);
-        mainPanel.add(timeLabel);
+// Add labels to the info panel
+infoPanel.add(label);
+infoPanel.add(instructionLabel);
+infoPanel.add(timeLabel);
 
-        // Add circles to main panel
-        JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10)); // FlowLayout with center alignment and 10px horizontal and vertical gap
-        circlePanel.setBackground(new Color(255, 205, 234));
-        
-        for (int i = 0; i < ARRAY_SIZE; i++) {
-            numberShapes[i] = new CircleShape();
-            circlePanel.add(numberShapes[i]);
-        }
+label.setFont(font);
+instructionLabel.setFont(font); // Increase font size to 16
+timeLabel.setFont(font); // Increase font size to 16
+// Add the info panel to the main panel
+mainPanel.add(infoPanel);
 
-        mainPanel.add(circlePanel);
+// Add circles to main panel
+JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout with center alignment and 10px horizontal and vertical gap
+circlePanel.setBackground(new Color(255, 205, 234));
 
-        // Add a panel for buttons to main panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10)); // FlowLayout with center alignment and 10px horizontal and vertical gap
-        buttonPanel.setBackground(new Color(255, 205, 234));
-        // Add yes and no buttons
+for (int i = 0; i < ARRAY_SIZE; i++) {
+    numberShapes[i] = new CircleShape();
+    circlePanel.add(numberShapes[i]);
+}
 
-        yesButton = new JButton("Yes");
-        noButton = new JButton("No");
-       
+mainPanel.add(circlePanel);
 
+// Add a panel for buttons to main panel
+JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); // FlowLayout with center alignment and 10px horizontal and vertical gap
+buttonPanel.setBackground(new Color(255, 205, 234));
+
+// Add yes and no buttons
+yesButton = new JButton("Yes");
+yesButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for Yes button
+noButton = new JButton("No");
+noButton.setPreferredSize(new Dimension(150, 60));
+
+buttonPanel.add(yesButton);
+buttonPanel.add(noButton);
+
+mainPanel.add(buttonPanel);
         yesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -88,17 +100,14 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         });
 
-        buttonPanel.add(yesButton);
-        buttonPanel.add(noButton);
-
-        mainPanel.add(buttonPanel);
+       
 
         // Add main panel to the frame
         add(mainPanel);
 
         // Frame settings
         setTitle("Bubble Sort Game");
-        setSize(1200, 200);
+        setSize(1200, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -233,7 +242,7 @@ public class GameFrame extends JFrame implements ActionListener {
         private String text = "";
     
         CircleShape() {
-            setPreferredSize(new Dimension(50, 50)); // Set the size of the circle
+            setPreferredSize(new Dimension(100, 100)); // Set the size of the circle
         }
     
         void setColor(Color color) {
@@ -245,24 +254,24 @@ public class GameFrame extends JFrame implements ActionListener {
             this.text = text;
             repaint();
         }
-    
-      
+        
         @Override
-    protected void paintComponent(Graphics g) {
-super.paintComponent(g);
-setBackground(new Color(255, 205, 234));
-g.setColor(color);
-int circleSize = 50; // Baguhin ang sukat ng bilog
-int x = (getWidth() - circleSize) / 2; // I-center ang circle horizontally
-int y = (getHeight() - circleSize) / 2; // I-center ang circle vertically
-g.fillOval(x, y, circleSize, circleSize); // I-draw ang circle
-g.setColor(Color.BLACK);
-g.drawOval(x, y, circleSize, circleSize); // I-draw ang outline ng circle
-FontMetrics fm = g.getFontMetrics();
-int textWidth = fm.stringWidth(text);
-int textHeight = fm.getHeight();
-g.drawString(text, getWidth() / 2 - textWidth / 2, getHeight() / 2 + textHeight / 4);
-}
-
-}
-}
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            setBackground(new Color(255, 205, 234));
+            g.setColor(color);
+            int circleSize = 100; // Change the size of the circle
+            int x = (getWidth() - circleSize) / 2;
+            int y = (getHeight() - circleSize) / 2;
+            g.fillOval(x, y, circleSize, circleSize);
+            g.setColor(Color.BLACK);
+            g.drawOval(x, y, circleSize, circleSize);
+            Font font = g.getFont().deriveFont(Font.BOLD, 16); // Adjust the font size here (16 is just an example)
+            g.setFont(font);
+            FontMetrics fm = g.getFontMetrics();
+            int textWidth = fm.stringWidth(text);
+            int textHeight = fm.getHeight();
+            g.drawString(text, getWidth() / 2 - textWidth / 2, getHeight() / 2 + textHeight / 4);
+        }
+    }
+}        
