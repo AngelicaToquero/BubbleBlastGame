@@ -28,11 +28,11 @@ public class LandingFrame extends JFrame implements ActionListener {
         setContentPane(layeredPane);
 
         JLabel imageLabel = new JLabel(image);
-        imageLabel.setBounds(0, 150, 1100, 300); 
+        imageLabel.setBounds(0, 150, 1100, 300);
         layeredPane.add(imageLabel, JLayeredPane.DEFAULT_LAYER);
 
         GradientPanel gradientPanel = new GradientPanel();
-        gradientPanel.setBounds(0, 0, 1100, 700); 
+        gradientPanel.setBounds(0, 0, 1100, 700);
         layeredPane.add(gradientPanel, JLayeredPane.DEFAULT_LAYER);
 
         JLabel titleLabel = new JLabel("<html><center>BUBBLE BLAST<br>GAME</center></html>");
@@ -45,6 +45,8 @@ public class LandingFrame extends JFrame implements ActionListener {
         button.setBounds(475, 450, 150, 50); // Adjusted Y coordinate to position it below the title label
         button.setFocusable(false);
         button.addActionListener(this);
+        button.setBorder(BorderFactory.createRaisedBevelBorder());
+
         layeredPane.add(button, JLayeredPane.POPUP_LAYER);
     }
 
