@@ -32,6 +32,9 @@ public class GameFrame extends JFrame implements ActionListener {
     private int lastProcessedIndex = 0; // Initialize the last processed index
     private int swapCount = 0;
     private Timer inactivityTimer;
+    private Timer timer;
+    private boolean gameEnded = false; // Flag to track game state
+    private JOptionPane hintOptionPane;
 
     GameFrame() {
         // Main panel settings
@@ -76,11 +79,15 @@ public class GameFrame extends JFrame implements ActionListener {
         // Add yes button
         yesButton = new JButton("Yes");
         yesButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for Yes button
+        yesButton.setBorder(BorderFactory.createRaisedBevelBorder());
+
         buttonPanel.add(yesButton);
 
         // Add no button
         noButton = new JButton("No");
         noButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for No button
+        noButton.setBorder(BorderFactory.createRaisedBevelBorder());
+
         buttonPanel.add(noButton);
 
         // Add hint button to the east (right) side of BorderLayout
@@ -90,7 +97,11 @@ public class GameFrame extends JFrame implements ActionListener {
         hintButton.setPreferredSize(new Dimension(40, 40)); // Set preferred size for hint button
         hintButton.setMargin(new Insets(0, 0, 0, 0)); // Set margin to zero for a round button
         hintButton.setFocusPainted(false); // Remove focus paint
+        hintButton.setOpaque(false);
+        hintButton.setContentAreaFilled(false);
+        hintButton.setForeground(Color.RED);
         hintButton.setFont(new Font("Arial", Font.BOLD, 20)); // Set font for the button text
+        hintButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
         buttonPanel.add(rightButtonPanel, BorderLayout.EAST); // Add hint button to the right side
 
@@ -107,18 +118,28 @@ public class GameFrame extends JFrame implements ActionListener {
         inactivityTimer = new Timer(10000, new ActionListener() { // 10 seconds timer
             @Override
             public void actionPerformed(ActionEvent e) {
-                showRandomHint();
+                if (!gameEnded && getExtendedState() != ICONIFIED) { // Check if the game has not ended and window is
+                                                                     // not minimized
+                    showRandomHint();
+                }
             }
         });
         inactivityTimer.setRepeats(false); // Only trigger once
 
-        // Add mouse motion listener to reset the inactivity timer when the player
-        // interacts
-        // with the game
-        addMouseMotionListener(new MouseAdapter() {
+        // Add component listener to detect frame state changes
+        addComponentListener(new ComponentAdapter() {
             @Override
-            public void mouseMoved(MouseEvent e) {
-                inactivityTimer.restart();
+            public void componentResized(ComponentEvent e) {
+                if (getExtendedState() == ICONIFIED) { // Check if the frame is minimized
+                    inactivityTimer.stop(); // Stop the inactivity timer
+                }
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                if (getExtendedState() != ICONIFIED) { // Check if the frame is not minimized
+                    inactivityTimer.restart(); // Restart the inactivity timer
+                }
             }
         });
 
@@ -161,15 +182,27 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void updateTimer() {
-        new Timer(1000, new ActionListener() {
+        // Stop the existing timer if it's running
+        if (timer != null && timer.isRunning()) {
+            timer.stop();
+        }
+
+        timer = new Timer(1000, new ActionListener() {
             int secondsElapsed = 0;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                secondsElapsed++;
-                timeLabel.setText("Time: " + secondsElapsed + " seconds");
+                if (!gameEnded) {
+                    secondsElapsed++;
+                    timeLabel.setText("Time: " + secondsElapsed + " seconds");
+                }
             }
-        }).start();
+        });
+
+        // Start the timer only if the game is not ended
+        if (!gameEnded) {
+            timer.start();
+        }
     }
 
     @Override
@@ -187,7 +220,9 @@ public class GameFrame extends JFrame implements ActionListener {
                 bubbleSort(); // Continue sorting after penalty
             }
         } else if (e.getSource() == hintButton) { // Handle hint button click
-            showRandomHint();
+            if (!gameEnded) { // Check if the game has not ended
+                showRandomHint();
+            }
         }
     }
 
@@ -249,15 +284,49 @@ public class GameFrame extends JFrame implements ActionListener {
             lastProcessedIndex = 0; // Reset the lastProcessedIndex
             bubbleSort(); // Perform another pass
         } else {
-            // Check if the array is sorted after the last pass
-
             if (isSorted()) {
                 long endTime = System.currentTimeMillis();
                 double timeTaken = (endTime - startTime + penaltyTime) / 1000;
-                JOptionPane.showMessageDialog(this, "Congratulations! You sorted the array in " + timeTaken
-                        + " seconds with " + swapCount + " swaps.");
+                int option = JOptionPane.showOptionDialog(mainPanel,
+                        "Congratulations! You sorted the array in " + timeTaken + " seconds with " + swapCount
+                                + " swaps.",
+                        "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                        new String[] { "Play Again", "Quit" }, "Play Again");
+
+                if (option == 0) {
+                    initializeGame(); // Start a new game
+                    displayNumbers();
+                    startTime = System.currentTimeMillis();
+                    swapCount = 0;
+                    penaltyTime = 0;
+                    lastProcessedIndex = 0;
+                    updateTimer();
+                } else {
+                    // Quit the game
+                    System.exit(0);
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Sorry, you lose. The array is not sorted.");
+                // Check if it's the last pass, prompt for another pass
+                if (lastProcessedIndex >= ARRAY_SIZE - 1) {
+                    int option = JOptionPane.showOptionDialog(mainPanel, "Sorry, you lose. The array is not sorted.",
+                            "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
+                            new String[] { "Try Again", "Quit" }, "Try Again");
+
+                    if (option == 0) {
+                        initializeGame(); // Reset the game
+                        displayNumbers();
+                        startTime = System.currentTimeMillis();
+                        swapCount = 0;
+                        penaltyTime = 0;
+                        lastProcessedIndex = 0;
+                        updateTimer();
+                    } else {
+                        // Quit the game
+                        System.exit(0);
+                    }
+                } else {
+                    bubbleSort(); // Continue sorting
+                }
             }
         }
     }
@@ -271,6 +340,15 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void showRandomHint() {
+        if (hintOptionPane != null && hintOptionPane.isVisible()) {
+            hintOptionPane.setVisible(false);
+
+            // Check if the window is minimized or the game is ended
+            if (getExtendedState() == ICONIFIED || gameEnded) {
+                return; // Do not display hint if window is minimized or game is ended
+            }
+        }
+
         String[] hints = {
                 "Keep an eye on the numbers inside the bubbles to guide your sorting.",
                 "Start with the first pair of bubbles and continue swapping until they're in order.",
@@ -291,7 +369,17 @@ public class GameFrame extends JFrame implements ActionListener {
 
         Random random = new Random();
         int index = random.nextInt(hints.length);
+
+        // Set the background color for the JOptionPane dialog
+        UIManager.put("OptionPane.background", new Color(255, 240, 245));
+        UIManager.put("Panel.background", new Color(255, 240, 245));
+
+        // Show the hint message in a JOptionPane
         JOptionPane.showMessageDialog(this, hints[index], "Hint", JOptionPane.INFORMATION_MESSAGE);
+
+        // Reset the background color to default after displaying the message
+        UIManager.put("OptionPane.background", UIManager.get("OptionPane.background"));
+        UIManager.put("Panel.background", UIManager.get("Panel.background"));
     }
 
     class CircleShape extends JPanel {

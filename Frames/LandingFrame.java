@@ -13,7 +13,7 @@ public class LandingFrame extends JFrame implements ActionListener {
 
     LandingFrame() {
         // Frame settings
-        setTitle("BubbleBlastGame");
+        setTitle("BubbleSort Blast Game");
         setSize(1100, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

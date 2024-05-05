@@ -12,14 +12,7 @@ public class HomeFrame extends JFrame implements ActionListener {
     JPanel navigationPanel = new JPanel(null);
     
     JButton playButton = new JButton("PLAY GAME");
-    JButton quitButton = new JButton("QUIT GAME");
     JLabel imageLabel = new JLabel(new ImageIcon("C:\\Users\\PC\\Desktop\\Logo.JPG")); // Set your image path
-    JLabel textLabel = new JLabel("<html><font size='6' color='#FFFFFF'><b>Dear Player,</b></font><br><br>" +
-        "<font size='4' color='#FFFFFF'><b>Objective:</b><br>" +
-        "&emsp;Sort the given array using bubble sort.<br><br>" +
-        "<b>Instructions:</b><br>" +
-        "&emsp;Observe the array and swap adjacent numbers to sort it. Time yourself to complete the sorting task.<br><br>" +
-        "<center>Ready to test your grasp of bubble sort?</font></html>");
 
     // For menu bar
     JPanel menuBar = new JPanel(null);
@@ -39,44 +32,55 @@ public class HomeFrame extends JFrame implements ActionListener {
 
     HomeFrame() {
         //Panel on left side
-        navigationPanel.setBackground(new Color(100, 32, 170)); // Violet color
-        navigationPanel.setBounds(0, 0, 275, 700);
+       GradientPaint gradient = new GradientPaint(0, 0, new Color(100, 32, 170), getWidth(), getHeight(), new Color(255, 69, 0));
+        navigationPanel.setOpaque(false);
+        navigationPanel.setBounds(0, 0, 275, 210);
         
         // Add image label
-        imageLabel.setBounds(10, 8, 250, 200); // Adjust coordinates and size as needed
+        imageLabel.setBounds(10, 6, 250, 200); // Adjust coordinates and size as needed
         navigationPanel.add(imageLabel);
         
-        // Add text label
-        textLabel.setBounds(5, 200, 260, 300); // Adjust coordinates and size as needed
-        navigationPanel.add(textLabel);
         
-        playButton.setBounds(50, 500, 150, 60);
+        playButton.setBounds(850, 500, 150, 60);
         playButton.addActionListener(this);
         playButton.setFont(new Font("Arial", Font.BOLD, 16)); 
-        navigationPanel.add(playButton);
+        mainPanel.add(playButton);
 
-        quitButton.setBounds(50, 580, 150, 60);
-        quitButton.addActionListener(this);
-        quitButton.setFont(new Font("Arial", Font.BOLD, 16)); 
-        navigationPanel.add(quitButton);
 
         // Add text to the menu bar panel
-        JLabel titleLabel = new JLabel("BUBBLESORT BLAST GAME");
+        JLabel titleLabel = new JLabel("<html><div style='text-align: center;'>BUBBLESORT BLAST<br>GAME</div></html>");
         titleLabel.setForeground(Color.BLACK); // Set text color
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 50)); // Set font and size
-        titleLabel.setBounds(330, 30, 1000, 100); // Set position and size
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 70)); // Set font and size
+        titleLabel.setBounds(300, 10, 1000, 200); // Set position and size
         menuBar.add(titleLabel); // Add to menu bar panel
 
         menuBar.setBackground(new Color(198, 91, 207)); // Set background color
-        menuBar.setBounds(0, 0, 1100, 150); // Set position and size
+        menuBar.setBounds(0, 0, 1100, 210); // Set position and size
 
         // Main panel settings
         mainPanel.setBackground(new Color(255, 205, 234));
         mainPanel.setBounds(0, 60, 1100, 660);
 
+        // Create a JLabel with the desired text
+       // Create a JLabel with the desired text
+       JLabel mainTextLabel = new JLabel("<html><font size='10' color='#000000'><b>Dear Player,</b></font><br><br>" +
+       "<font size='8' color='#000000'><b>Objective:</b><br>" +
+       "&emsp;Sort the given array using bubble sort.<br><br>" +
+       "<b>Instructions:</b><br>" +
+       "&emsp;Observe the array and swap adjacent numbers to sort it. Time yourself to complete the sorting task.<br><br>" +
+       "<left><font size='14' color='#FF0000'>Ready to dive into the bubble sort challenge?</left></html>");
+
+        mainTextLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Set the font and size of the text
+        mainTextLabel.setHorizontalAlignment(SwingConstants.CENTER); // Align the text to the center
+        mainTextLabel.setBounds(50, 100, 1000, 500); // Set the position and size of the label
+
+            // Add the JLabel to the main panel
+        mainPanel.add(mainTextLabel);
+
+
         // Frame settings
         add(label);
-        setTitle("BubbleBlastGame");
+        setTitle("BubbleSort Blast Game");
         setSize(1100, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -92,15 +96,10 @@ public class HomeFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == quitButton) {
-            LandingFrame landingFrame = new LandingFrame();
-            landingFrame.setVisible(true);
-            landingFrame.setLocationRelativeTo(null);
-            dispose(); // Close the current frame
-        } else if (e.getSource() == playButton) {
-            openGamePage();
-        }
+    if (e.getSource() == playButton) {
+        openGamePage();
     }
+}
 
     private void openGamePage() {
         GameFrame gameFrame = new GameFrame();
