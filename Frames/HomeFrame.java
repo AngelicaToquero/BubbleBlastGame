@@ -12,7 +12,7 @@ public class HomeFrame extends JFrame implements ActionListener {
     JPanel navigationPanel = new JPanel(null);
 
     JButton playButton = new JButton("PLAY GAME");
-    JLabel imageLabel = new JLabel(new ImageIcon("C:\\Users\\PC\\Desktop\\Logo.JPG")); // Set your image path
+    JLabel imageLabel = new JLabel(new ImageIcon("Frames\\Logo.JPG")); // Set your image path
 
     // For menu bar
     JPanel menuBar = new JPanel(null);
