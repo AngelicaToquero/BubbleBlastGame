@@ -1,11 +1,10 @@
 package Frames;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
-import java.util.Random;
+import java.awt.event.*;
+import java.util.*;
 
 public class GameFrame extends JFrame implements ActionListener {
     Font font = new Font("Arial", Font.BOLD, 20);
@@ -32,11 +31,12 @@ public class GameFrame extends JFrame implements ActionListener {
 
     private int lastProcessedIndex = 0; // Initialize the last processed index
     private int swapCount = 0;
+    private Timer inactivityTimer;
 
     GameFrame() {
         // Main panel settings
         JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, -5)); // GridLayout with 3 rows, 1 column, and 10px
-                                                                     // horizontal and vertical gap
+        // horizontal and vertical gap
         mainPanel.setBackground(new Color(255, 205, 234));
 
         // Create a panel for label, instruction, and time
@@ -56,8 +56,8 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Add circles to main panel
         JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout with center alignment
-                                                                                   // and 10px horizontal and vertical
-                                                                                   // gap
+        // and 10px horizontal and vertical
+        // gap
         circlePanel.setBackground(new Color(255, 205, 234));
 
         for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -69,8 +69,8 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Add a panel for buttons to main panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); // FlowLayout with center alignment
-                                                                                    // and 10px horizontal and vertical
-                                                                                    // gap
+        // and 10px horizontal and vertical
+        // gap
         buttonPanel.setBackground(new Color(255, 205, 234));
 
         // Add yes button
@@ -102,6 +102,25 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Add main panel to the frame
         add(mainPanel);
+
+        // Initialize inactivity timer
+        inactivityTimer = new Timer(10000, new ActionListener() { // 10 seconds timer
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showRandomHint();
+            }
+        });
+        inactivityTimer.setRepeats(false); // Only trigger once
+
+        // Add mouse motion listener to reset the inactivity timer when the player
+        // interacts
+        // with the game
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                inactivityTimer.restart();
+            }
+        });
 
         // Frame settings
         setTitle("Bubble Sort Game");
