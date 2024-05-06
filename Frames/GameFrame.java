@@ -206,25 +206,40 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == yesButton) {
-            swapNumbers();
-        } else if (e.getSource() == noButton) {
+public void actionPerformed(ActionEvent e) {
+    if (e.getSource() == yesButton) {
+        swapNumbers();
+    } else if (e.getSource() == noButton) {
+        int[] indices = getHighlightedIndices(); // Get the next pair of indices to highlight
+    
+        // Check if the two highlighted indices should not be swapped
+        boolean shouldNotSwap = numbers[indices[0]] > numbers[indices[1]];
+    
+        if (shouldNotSwap) {
+            // Display a message indicating that the swap should not be performed
+            JOptionPane.showMessageDialog(this, "Numbers " + numbers[indices[0]] + " and " + numbers[indices[1]] + " should be swapped.",
+                    "Swap Needed", JOptionPane.WARNING_MESSAGE);
+                    penaltyTime += 5000;
+    
+            // Update the display even though the swap should not be performed
+            displayArrayWithHighlight();
+        } else {
             lastProcessedIndex++; // Move one index forward
             displayArrayWithHighlight(); // Update the display
-
+    
             // Check if it's the last pass, prompt for another pass
             if (lastProcessedIndex >= ARRAY_SIZE - 1) {
                 promptForNextPass();
             } else {
                 bubbleSort(); // Continue sorting after penalty
             }
-        } else if (e.getSource() == hintButton) { // Handle hint button click
-            if (!gameEnded) { // Check if the game has not ended
-                showRandomHint();
-            }
+        }
+    } else if (e.getSource() == hintButton) { // Handle hint button click
+        if (!gameEnded) { // Check if the game has not ended
+            showRandomHint();
         }
     }
+}    
 
     private void bubbleSort() {
         // Update the instruction label
@@ -235,7 +250,6 @@ public class GameFrame extends JFrame implements ActionListener {
         if (lastProcessedIndex >= ARRAY_SIZE - 1) {
             promptForNextPass();
         }
-        swapCount++;
     }
 
     private boolean isSorted() {
@@ -250,17 +264,31 @@ public class GameFrame extends JFrame implements ActionListener {
     private void swapNumbers() {
         int[] tempArray = numbers.clone();
         int[] indices = getHighlightedIndices(); // Get the next pair of indices to highlight
-        int temp = numbers[indices[0]];
-        numbers[indices[0]] = numbers[indices[1]];
-        numbers[indices[1]] = temp;
-
-        lastProcessedIndex = indices[1]; // Update the last processed index
-
-        displayArrayWithHighlight(); // Update the display
-
-        if (Arrays.equals(numbers, tempArray)) {
-            penaltyTime += PENALTY;
+    
+        // Check if the two highlighted indices should be swapped
+        boolean shouldSwap = numbers[indices[0]] > numbers[indices[1]];
+    
+        if (shouldSwap) {
+            int temp = numbers[indices[0]];
+            numbers[indices[0]] = numbers[indices[1]];
+            numbers[indices[1]] = temp;
+    
+            lastProcessedIndex = indices[1]; // Update the last processed index
+    
+            displayArrayWithHighlight(); // Update the display
+            swapCount++;
+            if (Arrays.equals(numbers, tempArray)) {
+                penaltyTime += PENALTY;
+            }
+        } else {
+            // Display a message indicating that the swap should not be performed
+            JOptionPane.showMessageDialog(this, "Numbers " + numbers[indices[0]] + " and " + numbers[indices[1]] + " should not be swapped.",
+                    "Invalid Swap", JOptionPane.WARNING_MESSAGE);
+    
+            // Add penalty time for incorrect decision
+            penaltyTime += 5000; // 5 seconds penalty
         }
+    
         if (lastProcessedIndex >= ARRAY_SIZE - 1) {
             promptForNextPass();
         }
@@ -286,13 +314,13 @@ public class GameFrame extends JFrame implements ActionListener {
         } else {
             if (isSorted()) {
                 long endTime = System.currentTimeMillis();
-                double timeTaken = (endTime - startTime + penaltyTime) / 1000;
+                double timeTaken = (endTime - startTime) / 1000;
                 int option = JOptionPane.showOptionDialog(mainPanel,
                         "Congratulations! You sorted the array in " + timeTaken + " seconds with " + swapCount
-                                + " swaps.",
+                                + " swaps. An additional " + penaltyTime/1000 + " seconds was added for every wrong decision. Total time is " + (timeTaken + (penaltyTime / 1000)) + " seconds.",
                         "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                         new String[] { "Play Again", "Quit" }, "Play Again");
-
+    
                 if (option == 0) {
                     initializeGame(); // Start a new game
                     displayNumbers();
@@ -311,7 +339,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     int option = JOptionPane.showOptionDialog(mainPanel, "Sorry, you lose. The array is not sorted.",
                             "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                             new String[] { "Try Again", "Quit" }, "Try Again");
-
+    
                     if (option == 0) {
                         initializeGame(); // Reset the game
                         displayNumbers();
