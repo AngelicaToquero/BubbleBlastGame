@@ -7,9 +7,9 @@ import java.awt.event.*;
 import java.util.*;
 
 public class GameFrame extends JFrame implements ActionListener {
-    Font font = new Font("Arial", Font.BOLD, 20);
-    JLabel label = new JLabel("Welcome to the Bubble Sort Game!");
-    JLabel instructionLabel = new JLabel("Instructions: Should the highlighted numbers be swapped?");
+    Font font = new Font("Arial", Font.BOLD, 24);
+    JLabel label = new JLabel("Welcome to the Bubble Sorting Challenge!");
+    JLabel instructionLabel = new JLabel("Should the highlighted numbers be swapped?");
     JLabel timeLabel = new JLabel("Time: 0 seconds");
 
     // For main panel
@@ -17,7 +17,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     JButton yesButton;
     JButton noButton;
-    JButton hintButton; // New hint button
+    JButton hintButton; 
 
     private static final int ARRAY_SIZE = 10;
     private static final int MAX_NUMBER = 100;
@@ -52,15 +52,12 @@ public class GameFrame extends JFrame implements ActionListener {
         infoPanel.add(timeLabel);
 
         label.setFont(font);
-        instructionLabel.setFont(font); // Increase font size to 16
-        timeLabel.setFont(font); // Increase font size to 16
-        // Add the info panel to the main panel
+        instructionLabel.setFont(font); 
+        timeLabel.setFont(font); 
         mainPanel.add(infoPanel);
 
         // Add circles to main panel
-        JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); // FlowLayout with center alignment
-        // and 10px horizontal and vertical
-        // gap
+        JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); 
         circlePanel.setBackground(new Color(255, 205, 234));
 
         for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -71,47 +68,44 @@ public class GameFrame extends JFrame implements ActionListener {
         mainPanel.add(circlePanel);
 
         // Add a panel for buttons to main panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); // FlowLayout with center alignment
-        // and 10px horizontal and vertical
-        // gap
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); 
         buttonPanel.setBackground(new Color(255, 205, 234));
 
         // Add yes button
         yesButton = new JButton("Yes");
-        yesButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for Yes button
+        yesButton.setPreferredSize(new Dimension(150, 60)); 
         yesButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
         buttonPanel.add(yesButton);
 
         // Add no button
         noButton = new JButton("No");
-        noButton.setPreferredSize(new Dimension(150, 60)); // Set preferred size for No button
+        noButton.setPreferredSize(new Dimension(150, 60)); 
         noButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
         buttonPanel.add(noButton);
 
         // Add hint button to the east (right) side of BorderLayout
-        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // FlowLayout for hint button
+        JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightButtonPanel.setBackground(new Color(255, 205, 234));
         rightButtonPanel.add(hintButton = new JButton("?"));
-        hintButton.setPreferredSize(new Dimension(40, 40)); // Set preferred size for hint button
-        hintButton.setMargin(new Insets(0, 0, 0, 0)); // Set margin to zero for a round button
-        hintButton.setFocusPainted(false); // Remove focus paint
+        hintButton.setPreferredSize(new Dimension(40, 40));
+        hintButton.setMargin(new Insets(0, 0, 0, 0)); 
+        hintButton.setFocusPainted(false); 
         hintButton.setOpaque(false);
         hintButton.setContentAreaFilled(false);
         hintButton.setForeground(Color.RED);
-        hintButton.setFont(new Font("Arial", Font.BOLD, 20)); // Set font for the button text
+        hintButton.setFont(new Font("Arial", Font.BOLD, 20)); 
         hintButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
-        buttonPanel.add(rightButtonPanel, BorderLayout.EAST); // Add hint button to the right side
+        buttonPanel.add(rightButtonPanel, BorderLayout.EAST); 
 
         mainPanel.add(buttonPanel);
 
         yesButton.addActionListener(this);
         noButton.addActionListener(this);
-        hintButton.addActionListener(this); // ActionListener for hint button
+        hintButton.addActionListener(this); 
 
-        // Add main panel to the frame
         add(mainPanel);
 
         // Initialize inactivity timer
@@ -144,7 +138,7 @@ public class GameFrame extends JFrame implements ActionListener {
         });
 
         // Frame settings
-        setTitle("Bubble Sort Game");
+        setTitle("BubbleSort Blast Game");
         setSize(1200, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -242,8 +236,6 @@ public void actionPerformed(ActionEvent e) {
 }    
 
     private void bubbleSort() {
-        // Update the instruction label
-        instructionLabel.setText("Instructions: Should the highlighted numbers be swapped?");
 
         // Display the array with highlight
         displayArrayWithHighlight();
@@ -398,14 +390,13 @@ public void actionPerformed(ActionEvent e) {
         Random random = new Random();
         int index = random.nextInt(hints.length);
 
-        // Set the background color for the JOptionPane dialog
         UIManager.put("OptionPane.background", new Color(255, 240, 245));
         UIManager.put("Panel.background", new Color(255, 240, 245));
 
-        // Show the hint message in a JOptionPane
+        
         JOptionPane.showMessageDialog(this, hints[index], "Hint", JOptionPane.INFORMATION_MESSAGE);
 
-        // Reset the background color to default after displaying the message
+        
         UIManager.put("OptionPane.background", UIManager.get("OptionPane.background"));
         UIManager.put("Panel.background", UIManager.get("Panel.background"));
     }
@@ -415,12 +406,12 @@ public void actionPerformed(ActionEvent e) {
         private String text = "";
 
         CircleShape() {
-            setPreferredSize(new Dimension(100, 100)); // Set the size of the circle
+            setPreferredSize(new Dimension(100, 100)); 
         }
 
         void setColor(Color color) {
             this.color = color;
-            repaint(); // Redraw the shape with the new color
+            repaint(); 
         }
 
         void setText(String text) {
@@ -433,13 +424,13 @@ public void actionPerformed(ActionEvent e) {
             super.paintComponent(g);
             setBackground(new Color(255, 205, 234));
             g.setColor(color);
-            int circleSize = 100; // Change the size of the circle
+            int circleSize = 100; 
             int x = (getWidth() - circleSize) / 2;
             int y = (getHeight() - circleSize) / 2;
             g.fillOval(x, y, circleSize, circleSize);
             g.setColor(Color.BLACK);
             g.drawOval(x, y, circleSize, circleSize);
-            Font font = g.getFont().deriveFont(Font.BOLD, 16); // Adjust the font size here (16 is just an example)
+            Font font = g.getFont().deriveFont(Font.BOLD, 16); 
             g.setFont(font);
             FontMetrics fm = g.getFontMetrics();
             int textWidth = fm.stringWidth(text);
