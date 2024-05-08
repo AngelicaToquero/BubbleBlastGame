@@ -34,7 +34,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private boolean gameEnded = false; 
     private JOptionPane hintOptionPane;
 
-    private static final int INACTIVITY_DELAY = 3000; 
+    private static final int INACTIVITY_DELAY = 5000; 
 
     GameFrame() {
        
@@ -148,8 +148,7 @@ public class GameFrame extends JFrame implements ActionListener {
         startTime = System.currentTimeMillis();
         updateTimer();
 
-      
-        inactivityTimer.start();
+    
     }
 
     private void initializeGame() {
@@ -316,6 +315,10 @@ public void actionPerformed(ActionEvent e) {
     }
 
     private void showRandomHint() {
+        if (gameEnded || isSorted()) {
+            return;
+        }
+
         if (hintOptionPane != null && hintOptionPane.isVisible()) {
             hintOptionPane.setVisible(false);
 
@@ -323,7 +326,6 @@ public void actionPerformed(ActionEvent e) {
                 return;
             }
         }
-
 
 
         String[] hints = {
