@@ -11,8 +11,7 @@ public class GameFrame extends JFrame implements ActionListener {
     JLabel label = new JLabel("Welcome to the Bubble Sorting Challenge!");
     JLabel instructionLabel = new JLabel("Should the highlighted numbers be swapped?");
     JLabel timeLabel = new JLabel("Time: 0 seconds");
-
-    // For main panel
+    
     JPanel mainPanel = new JPanel(new GridLayout(5, 1)); 
     JButton yesButton;
     JButton noButton;
@@ -136,7 +135,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         });
 
-        
+        // Frame settings
         setTitle("BubbleSort Blast Game");
         setSize(1200, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
