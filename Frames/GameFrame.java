@@ -13,11 +13,10 @@ public class GameFrame extends JFrame implements ActionListener {
     JLabel timeLabel = new JLabel("Time: 0 seconds");
 
     // For main panel
-    JPanel mainPanel = new JPanel(new GridLayout(5, 1)); // GridLayout with 4 rows and 1 column
-
+    JPanel mainPanel = new JPanel(new GridLayout(5, 1)); 
     JButton yesButton;
     JButton noButton;
-    JButton hintButton; 
+    JButton hintButton;
 
     private static final int ARRAY_SIZE = 10;
     private static final int MAX_NUMBER = 100;
@@ -29,35 +28,36 @@ public class GameFrame extends JFrame implements ActionListener {
 
     CircleShape[] numberShapes = new CircleShape[ARRAY_SIZE];
 
-    private int lastProcessedIndex = 0; // Initialize the last processed index
+    private int lastProcessedIndex = 0; 
     private int swapCount = 0;
     private Timer inactivityTimer;
     private Timer timer;
-    private boolean gameEnded = false; // Flag to track game state
+    private boolean gameEnded = false; 
     private JOptionPane hintOptionPane;
 
+    private static final int INACTIVITY_DELAY = 3000; 
+
     GameFrame() {
-        // Main panel settings
-        JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, -5)); // GridLayout with 3 rows, 1 column, and 10px
-        // horizontal and vertical gap
+       
+        JPanel mainPanel = new JPanel(new GridLayout(3, 1, 10, -5)); 
         mainPanel.setBackground(new Color(255, 205, 234));
 
-        // Create a panel for label, instruction, and time
+        
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         infoPanel.setBackground(new Color(255, 205, 234));
 
-        // Add labels to the info panel
+       
         infoPanel.add(label);
         infoPanel.add(instructionLabel);
         infoPanel.add(timeLabel);
 
         label.setFont(font);
-        instructionLabel.setFont(font); 
-        timeLabel.setFont(font); 
+        instructionLabel.setFont(font);
+        timeLabel.setFont(font);
         mainPanel.add(infoPanel);
 
-        // Add circles to main panel
-        JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5)); 
+       
+        JPanel circlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         circlePanel.setBackground(new Color(255, 205, 234));
 
         for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -67,72 +67,71 @@ public class GameFrame extends JFrame implements ActionListener {
 
         mainPanel.add(circlePanel);
 
-        // Add a panel for buttons to main panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50)); 
+       
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 50));
         buttonPanel.setBackground(new Color(255, 205, 234));
 
-        // Add yes button
+        
         yesButton = new JButton("Yes");
-        yesButton.setPreferredSize(new Dimension(150, 60)); 
+        yesButton.setPreferredSize(new Dimension(150, 60));
         yesButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
         buttonPanel.add(yesButton);
 
-        // Add no button
+        
         noButton = new JButton("No");
-        noButton.setPreferredSize(new Dimension(150, 60)); 
+        noButton.setPreferredSize(new Dimension(150, 60));
         noButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
         buttonPanel.add(noButton);
 
-        // Add hint button to the east (right) side of BorderLayout
         JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightButtonPanel.setBackground(new Color(255, 205, 234));
         rightButtonPanel.add(hintButton = new JButton("?"));
         hintButton.setPreferredSize(new Dimension(40, 40));
-        hintButton.setMargin(new Insets(0, 0, 0, 0)); 
-        hintButton.setFocusPainted(false); 
+        hintButton.setMargin(new Insets(0, 0, 0, 0));
+        hintButton.setFocusPainted(false);
         hintButton.setOpaque(false);
         hintButton.setContentAreaFilled(false);
         hintButton.setForeground(Color.RED);
-        hintButton.setFont(new Font("Arial", Font.BOLD, 20)); 
+        hintButton.setFont(new Font("Arial", Font.BOLD, 20));
         hintButton.setBorder(BorderFactory.createRaisedBevelBorder());
 
-        buttonPanel.add(rightButtonPanel, BorderLayout.EAST); 
+        buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
 
         mainPanel.add(buttonPanel);
 
         yesButton.addActionListener(this);
         noButton.addActionListener(this);
-        hintButton.addActionListener(this); 
+        hintButton.addActionListener(this);
 
         add(mainPanel);
 
-        // Initialize inactivity timer
-        inactivityTimer = new Timer(10000, new ActionListener() { // 10 seconds timer
+       
+        inactivityTimer = new Timer(INACTIVITY_DELAY, new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!gameEnded && getExtendedState() != ICONIFIED) { // Check if the game has not ended and window is
-                                                                     // not minimized
+                if (!gameEnded && getExtendedState() != ICONIFIED) { 
+                                                                     
                     showRandomHint();
                 }
             }
         });
-        inactivityTimer.setRepeats(false); // Only trigger once
+        inactivityTimer.setRepeats(false); 
 
-        // Add component listener to detect frame state changes
+       
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                if (getExtendedState() == ICONIFIED) { // Check if the frame is minimized
-                    inactivityTimer.stop(); // Stop the inactivity timer
+                if (getExtendedState() == ICONIFIED) { 
+                    inactivityTimer.stop(); 
                 }
             }
 
             @Override
             public void componentShown(ComponentEvent e) {
-                if (getExtendedState() != ICONIFIED) { // Check if the frame is not minimized
-                    inactivityTimer.restart(); // Restart the inactivity timer
+                if (getExtendedState() != ICONIFIED) { 
+                    inactivityTimer.restart(); 
                 }
             }
         });
@@ -146,9 +145,12 @@ public class GameFrame extends JFrame implements ActionListener {
         setVisible(true);
 
         initializeGame();
-        displayNumbers();
+        displayArrayWithHighlight();
         startTime = System.currentTimeMillis();
         updateTimer();
+
+      
+        inactivityTimer.start();
     }
 
     private void initializeGame() {
@@ -164,19 +166,9 @@ public class GameFrame extends JFrame implements ActionListener {
         return array;
     }
 
-    private void displayNumbers() {
-        for (int i = 0; i < ARRAY_SIZE; i++) {
-            if (i == lastProcessedIndex || i == lastProcessedIndex + 1) {
-                numberShapes[i].setColor(Color.WHITE);
-            } else {
-                numberShapes[i].setColor(Color.PINK);
-            }
-            numberShapes[i].setText(Integer.toString(numbers[i]));
-        }
-    }
 
     private void updateTimer() {
-        // Stop the existing timer if it's running
+       
         if (timer != null && timer.isRunning()) {
             timer.stop();
         }
@@ -193,7 +185,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         });
 
-        // Start the timer only if the game is not ended
+       
         if (!gameEnded) {
             timer.start();
         }
@@ -204,40 +196,27 @@ public void actionPerformed(ActionEvent e) {
     if (e.getSource() == yesButton) {
         swapNumbers();
     } else if (e.getSource() == noButton) {
-        int[] indices = getHighlightedIndices(); // Get the next pair of indices to highlight
-    
-        // Check if the two highlighted indices should not be swapped
-        boolean shouldNotSwap = numbers[indices[0]] > numbers[indices[1]];
+        boolean shouldNotSwap = numbers[lastProcessedIndex] > numbers[lastProcessedIndex + 1];
     
         if (shouldNotSwap) {
-            // Display a message indicating that the swap should not be performed
-            JOptionPane.showMessageDialog(this, "Numbers " + numbers[indices[0]] + " and " + numbers[indices[1]] + " should be swapped.",
+            JOptionPane.showMessageDialog(this, "Numbers " + numbers[lastProcessedIndex] + " and " + numbers[lastProcessedIndex + 1] + " should be swapped.",
                     "Swap Needed", JOptionPane.WARNING_MESSAGE);
                     penaltyTime += 5000;
-    
-            // Update the display even though the swap should not be performed
             displayArrayWithHighlight();
         } else {
-            lastProcessedIndex++; // Move one index forward
-            displayArrayWithHighlight(); // Update the display
-    
-            // Check if it's the last pass, prompt for another pass
-            if (lastProcessedIndex >= ARRAY_SIZE - 1) {
-                promptForNextPass();
-            } else {
-                bubbleSort(); // Continue sorting after penalty
-            }
+            lastProcessedIndex++;
+            displayArrayWithHighlight();
+            endOfPass();
         }
-    } else if (e.getSource() == hintButton) { // Handle hint button click
-        if (!gameEnded) { // Check if the game has not ended
+    } else if (e.getSource() == hintButton) {
+        if (!gameEnded) {
             showRandomHint();
         }
     }
-}    
-
-    private void bubbleSort() {
-
-        // Display the array with highlight
+  
+        inactivityTimer.restart();
+    }
+    private void endOfPass() {
         displayArrayWithHighlight();
         if (lastProcessedIndex >= ARRAY_SIZE - 1) {
             promptForNextPass();
@@ -255,36 +234,29 @@ public void actionPerformed(ActionEvent e) {
 
     private void swapNumbers() {
         int[] tempArray = numbers.clone();
-        int[] indices = getHighlightedIndices(); // Get the next pair of indices to highlight
-    
-        // Check if the two highlighted indices should be swapped
-        boolean shouldSwap = numbers[indices[0]] > numbers[indices[1]];
+
+        boolean shouldSwap = numbers[lastProcessedIndex] > numbers[lastProcessedIndex + 1];
     
         if (shouldSwap) {
-            int temp = numbers[indices[0]];
-            numbers[indices[0]] = numbers[indices[1]];
-            numbers[indices[1]] = temp;
+            int temp = numbers[lastProcessedIndex];
+            numbers[lastProcessedIndex] = numbers[lastProcessedIndex + 1];
+            numbers[lastProcessedIndex + 1] = temp;
     
-            lastProcessedIndex = indices[1]; // Update the last processed index
-    
-            displayArrayWithHighlight(); // Update the display
+            lastProcessedIndex++;
+            displayArrayWithHighlight();
             swapCount++;
             if (Arrays.equals(numbers, tempArray)) {
                 penaltyTime += PENALTY;
             }
         } else {
-            // Display a message indicating that the swap should not be performed
-            JOptionPane.showMessageDialog(this, "Numbers " + numbers[indices[0]] + " and " + numbers[indices[1]] + " should not be swapped.",
+            JOptionPane.showMessageDialog(this, "Numbers " + numbers[lastProcessedIndex] + " and " + numbers[lastProcessedIndex + 1] + " should not be swapped.",
                     "Invalid Swap", JOptionPane.WARNING_MESSAGE);
-    
-            // Add penalty time for incorrect decision
-            penaltyTime += 5000; // 5 seconds penalty
+            penaltyTime += 5000;
         }
-    
-        if (lastProcessedIndex >= ARRAY_SIZE - 1) {
-            promptForNextPass();
-        }
+        endOfPass();
     }
+
+    
 
     private void displayArrayWithHighlight() {
         for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -301,8 +273,8 @@ public void actionPerformed(ActionEvent e) {
         int response = JOptionPane.showConfirmDialog(this, "Do you want to perform another pass?", "Next Pass",
                 JOptionPane.YES_NO_OPTION);
         if (response == JOptionPane.YES_OPTION) {
-            lastProcessedIndex = 0; // Reset the lastProcessedIndex
-            bubbleSort(); // Perform another pass
+            lastProcessedIndex = 0;
+            displayArrayWithHighlight();
         } else {
             if (isSorted()) {
                 long endTime = System.currentTimeMillis();
@@ -314,60 +286,46 @@ public void actionPerformed(ActionEvent e) {
                         new String[] { "Play Again", "Quit" }, "Play Again");
     
                 if (option == 0) {
-                    initializeGame(); // Start a new game
-                    displayNumbers();
+                    initializeGame();
                     startTime = System.currentTimeMillis();
                     swapCount = 0;
                     penaltyTime = 0;
                     lastProcessedIndex = 0;
                     updateTimer();
+                    displayArrayWithHighlight();
                 } else {
-                    // Quit the game
                     System.exit(0);
                 }
             } else {
-                // Check if it's the last pass, prompt for another pass
-                if (lastProcessedIndex >= ARRAY_SIZE - 1) {
                     int option = JOptionPane.showOptionDialog(mainPanel, "Sorry, you lose. The array is not sorted.",
                             "Game Over", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null,
                             new String[] { "Try Again", "Quit" }, "Try Again");
     
                     if (option == 0) {
-                        initializeGame(); // Reset the game
-                        displayNumbers();
+                        initializeGame();
                         startTime = System.currentTimeMillis();
                         swapCount = 0;
                         penaltyTime = 0;
                         lastProcessedIndex = 0;
                         updateTimer();
+                        displayArrayWithHighlight();
                     } else {
-                        // Quit the game
                         System.exit(0);
                     }
-                } else {
-                    bubbleSort(); // Continue sorting
-                }
             }
         }
-    }
-
-    private int[] getHighlightedIndices() {
-        int[] indices = new int[2];
-        indices[0] = lastProcessedIndex;
-        indices[1] = lastProcessedIndex + 1;
-
-        return indices;
     }
 
     private void showRandomHint() {
         if (hintOptionPane != null && hintOptionPane.isVisible()) {
             hintOptionPane.setVisible(false);
 
-            // Check if the window is minimized or the game is ended
             if (getExtendedState() == ICONIFIED || gameEnded) {
-                return; // Do not display hint if window is minimized or game is ended
+                return;
             }
         }
+
+
 
         String[] hints = {
                 "Keep an eye on the numbers inside the bubbles to guide your sorting.",
@@ -393,10 +351,8 @@ public void actionPerformed(ActionEvent e) {
         UIManager.put("OptionPane.background", new Color(255, 240, 245));
         UIManager.put("Panel.background", new Color(255, 240, 245));
 
-        
         JOptionPane.showMessageDialog(this, hints[index], "Hint", JOptionPane.INFORMATION_MESSAGE);
 
-        
         UIManager.put("OptionPane.background", UIManager.get("OptionPane.background"));
         UIManager.put("Panel.background", UIManager.get("Panel.background"));
     }
@@ -406,12 +362,12 @@ public void actionPerformed(ActionEvent e) {
         private String text = "";
 
         CircleShape() {
-            setPreferredSize(new Dimension(100, 100)); 
+            setPreferredSize(new Dimension(100, 100));
         }
 
         void setColor(Color color) {
             this.color = color;
-            repaint(); 
+            repaint();
         }
 
         void setText(String text) {
@@ -424,13 +380,13 @@ public void actionPerformed(ActionEvent e) {
             super.paintComponent(g);
             setBackground(new Color(255, 205, 234));
             g.setColor(color);
-            int circleSize = 100; 
+            int circleSize = 100;
             int x = (getWidth() - circleSize) / 2;
             int y = (getHeight() - circleSize) / 2;
             g.fillOval(x, y, circleSize, circleSize);
             g.setColor(Color.BLACK);
             g.drawOval(x, y, circleSize, circleSize);
-            Font font = g.getFont().deriveFont(Font.BOLD, 16); 
+            Font font = g.getFont().deriveFont(Font.BOLD, 16);
             g.setFont(font);
             FontMetrics fm = g.getFontMetrics();
             int textWidth = fm.stringWidth(text);

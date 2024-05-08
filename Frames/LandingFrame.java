@@ -11,7 +11,7 @@ public class LandingFrame extends JFrame implements ActionListener {
     ImageIcon image = new ImageIcon("Frames\\pictures\\photo_2024-03-31_00-00-54-removebg-preview.png");
 
     LandingFrame() {
-        // Frame settings
+        
         setTitle("BubbleSort Blast Game");
         setSize(1100, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
