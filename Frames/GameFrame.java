@@ -136,7 +136,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         });
 
-        // Frame settings
+        
         setTitle("BubbleSort Blast Game");
         setSize(1200, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
